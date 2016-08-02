@@ -42,6 +42,20 @@ defmodule Esq.Queue do
         options = Keyword.merge(@config, options)
         @adapter.nack(job, why, options)
       end
+
+      def failed do
+        @failure.failed(@config)
+      end
+
+      # Retries a job that is on the failure queue
+      def retry!(job) do
+        @failure.retry!(__MODULE__, job, @config)
+      end
+
+      # Removes a job from the failure queue
+      def remove!(job) do
+        @failure.remove!(job, @config)
+      end
     end
   end
 

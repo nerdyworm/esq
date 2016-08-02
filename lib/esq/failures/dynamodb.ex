@@ -28,7 +28,16 @@ defmodule Esq.Failures.Dynamodb do
     :ok
   end
 
-  def failed(table_name, queue_name) do
+  def create_table!(name) do
+    Dynamo.create_table(name,
+     [queue_name: :hash, job_id: :range],
+     [queue_name: :string, job_id: :string], 1, 1)
+  end
+
+  def failed(options) do
+    queue_name = Keyword.fetch!(options, :queue_name)
+    table_name = Keyword.fetch!(options, :table_name)
+
     {:ok, results} = ExAws.Dynamo.query(table_name,
       expression_attribute_values: [desired_queue_name: queue_name],
       key_condition_expression: "queue_name = :desired_queue_name")
@@ -39,7 +48,24 @@ defmodule Esq.Failures.Dynamodb do
     end)
   end
 
-  def create_table!(name) do
-    Dynamo.create_table(name, "job_id", %{job_id: :string}, 1, 1)
+  def retry!(queue, job, options) do
+    queue_name = Keyword.fetch!(options, :queue_name)
+    table_name = Keyword.fetch!(options, :table_name)
+
+    :ok = queue.push(String.to_atom(job.module), job.args)
+    :ok = remove!(job, options)
+    :ok
+  end
+
+  def remove!(job, options) do
+    queue_name = Keyword.fetch!(options, :queue_name)
+    table_name = Keyword.fetch!(options, :table_name)
+
+    {:ok, _} = Dynamo.delete_item(table_name, %{
+      queue_name: queue_name,
+      job_id: job.id
+    })
+
+    :ok
   end
 end

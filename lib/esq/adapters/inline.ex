@@ -9,7 +9,10 @@ defmodule Esq.Adapters.Inline do
     end
   end
 
-  def poll(limit, config) do
+  def poll(_limit, _config) do
     {:ok, []}
   end
+
+  def ack(_job, _config), do: :ok
+  def nack(_job, _config), do: :ok
 end

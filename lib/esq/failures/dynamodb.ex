@@ -28,8 +28,8 @@ defmodule Esq.Failures.Dynamodb do
     :ok
   end
 
-  def failed(queue_name) do
-    {:ok, results} = ExAws.Dynamo.query(@table,
+  def failed(table_name, queue_name) do
+    {:ok, results} = ExAws.Dynamo.query(table_name,
       expression_attribute_values: [desired_queue_name: queue_name],
       key_condition_expression: "queue_name = :desired_queue_name")
 
@@ -39,8 +39,7 @@ defmodule Esq.Failures.Dynamodb do
     end)
   end
 
-  # TODO - this needs to be created at boot?
-  def create_table! do
-    Dynamo.create_table(@table, "job_id", %{job_id: :string}, 1, 1)
+  def create_table!(name) do
+    Dynamo.create_table(name, "job_id", %{job_id: :string}, 1, 1)
   end
 end

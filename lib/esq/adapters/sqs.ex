@@ -6,8 +6,9 @@ defmodule Esq.Adapters.SQS do
   alias Esq.Adapters.SQS.Parser
 
   def poll(limit, config) do
-    queue_name = Keyword.get(config, :queue_name, "elixir")
+    queue_name = Keyword.get(config, :queue_name)
     wait_time_seconds = Keyword.get(config, :wait_time_seconds, 20)
+    debug = Keyword.get(config, :debug, false)
 
     limit = if limit > 10 do
       10
@@ -15,7 +16,9 @@ defmodule Esq.Adapters.SQS do
       limit
     end
 
-    Logger.debug "[SQS] polling queue=#{queue_name} limit=#{limit}"
+    if debug do
+      Logger.debug "[SQS] polling queue=#{queue_name} limit=#{limit}"
+    end
 
     {:ok, response} = ExAws.SQS.receive_message(queue_name, [
       wait_time_seconds: wait_time_seconds,
@@ -27,7 +30,9 @@ defmodule Esq.Adapters.SQS do
       Parser.messages(response.body)
       |> Enum.map(&Esq.Queue.Job.deserialize/1)
 
-    Logger.debug "[SQS] polling result=#{length(jobs)}"
+    if debug && length(jobs) > 0 do
+      Logger.debug "[SQS] polling result=#{length(jobs)}"
+    end
 
     {:ok, jobs}
   end

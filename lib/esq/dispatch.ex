@@ -21,7 +21,7 @@ defmodule Esq.Dispatch do
     {:noreply, updated_state, timeout}
   end
 
-  def handle_info({:DOWN, _, :process, pid, :normal}, state) do
+  def handle_info({:DOWN, _, :process, _pid, :normal}, state) do
     {:noreply, state, 0}
   end
 

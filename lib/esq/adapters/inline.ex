@@ -14,5 +14,5 @@ defmodule Esq.Adapters.Inline do
   end
 
   def ack(_job, _config), do: :ok
-  def nack(_job, _config), do: :ok
+  def nack(_job, _why, _config), do: :ok
 end

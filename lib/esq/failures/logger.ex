@@ -11,6 +11,6 @@ defmodule Esq.Failures.Logger do
   end
 
   def failed(_config),  do: {:error, :no_impl}
-  def retry!(_config),  do: {:error, :no_impl}
-  def remove!(_config), do: {:error, :no_impl}
+  def retry!(_mod, _job, _config),  do: {:error, :no_impl}
+  def remove!(_config, _job), do: {:error, :no_impl}
 end

@@ -25,7 +25,7 @@ defmodule EsqTest do
       FakeQueue.push(FakeJob, [i])
     end
 
-    {:ok, pid} = Esq.Supervisor.start_link(FakeQueue)
+    {:ok, _pid} = Esq.Supervisor.start_link(FakeQueue)
 
     :timer.sleep(1000 * 10)
   end

@@ -95,6 +95,6 @@ defmodule Esq.Adapters.SQS do
 
   defp jitter(seconds) when is_nil(seconds), do: jitter(1)
   defp jitter(seconds) do
-    seconds + :random.uniform(seconds)
+    seconds + :rand.uniform(seconds)
   end
 end

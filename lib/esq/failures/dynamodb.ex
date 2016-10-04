@@ -49,9 +49,6 @@ defmodule Esq.Failures.Dynamodb do
   end
 
   def retry!(queue, job, options) do
-    queue_name = Keyword.fetch!(options, :queue_name)
-    table_name = Keyword.fetch!(options, :table_name)
-
     :ok = queue.push(String.to_atom(job.module), job.args)
     :ok = remove!(job, options)
     :ok
